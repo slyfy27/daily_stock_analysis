@@ -184,6 +184,44 @@ python main.py
 > Docker 部署、定时任务配置请参考 [完整指南](docs/full-guide.md)
 > 桌面客户端打包请参考 [桌面端打包说明](docs/desktop-package.md)
 
+### 方式三：Web 管理台（本地）
+
+> 用于管理环境变量配置并浏览 Markdown 报告
+
+```bash
+# 1. 启动后端（配置与报告 API）
+python web_admin/server.py
+
+# 2. 前端开发模式（另开终端）
+cd web
+npm install
+npm run dev
+```
+
+生产构建（可由 `web_admin/server.py` 直接提供静态页面）：
+
+```bash
+cd web
+npm install
+npm run build
+cd ..
+python web_admin/server.py
+```
+
+### 方式四：Docker 部署
+
+```bash
+# 配置环境变量
+cp .env.example .env
+vim .env
+
+# 一键启动
+docker-compose up -d
+
+# 查看日志
+docker-compose logs -f
+```
+
 ## 📱 推送效果
 
 ### 决策仪表盘

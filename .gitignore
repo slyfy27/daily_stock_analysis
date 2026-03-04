@@ -77,3 +77,8 @@ CLAUDE.md
 static/
 /apps/dsa-desktop/dist/
 /apps/dsa-desktop/node_modules/
+
+docs/
+
+# Web
+node_modules/
