@@ -6,14 +6,14 @@ x-common: &common
     dockerfile: docker/Dockerfile
   restart: unless-stopped
   env_file:
-    - ../.env.example  # 修改为您的NAS上的.env文件路径，例如 /mnt/nas/.env 或其他实际目录
+    - ../.env  # 修改为您的NAS上的.env文件路径，例如 /mnt/nas/.env 或其他实际目录
   environment:
     - TZ=Asia/Shanghai
   volumes:
     - ../data:/app/data
     - ../logs:/app/logs
     - ../reports:/app/reports
-    - ../.env.example:/app/.env  # 如果需要将NAS上的.env挂载到容器内，也可相应调整
+    - ../.env:/app/.env  # 如果需要将NAS上的.env挂载到容器内，也可相应调整
   network_mode: host  # 添加host网络模式（注意：host模式下，端口暴露可能无效，因为容器直接使用宿主机网络）
 
 services:
