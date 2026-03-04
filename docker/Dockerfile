@@ -13,6 +13,14 @@ RUN npm ci
 COPY apps/dsa-web/ ./
 RUN npm run build
 
+# Web admin console (PR #20) frontend build
+FROM node:20-slim AS web-admin-builder
+WORKDIR /app/web
+COPY web/package.json ./
+RUN npm install
+COPY web/ ./
+RUN npm run build
+
 # Pin to bookworm: wkhtmltopdf was removed from Debian testing (2025)
 FROM python:3.11-slim-bookworm
 
@@ -48,7 +56,9 @@ COPY bot/ ./bot/
 COPY patch/ ./patch/
 COPY src/ ./src/
 COPY strategies/ ./strategies/
+COPY web_admin/ ./web_admin/
 COPY --from=web-builder /app/static ./static/
+COPY --from=web-admin-builder /app/web/dist ./web/dist/
 
 # 创建数据目录
 RUN mkdir -p /app/data /app/logs /app/reports
@@ -61,8 +71,8 @@ ENV DATABASE_PATH=/app/data/stock_analysis.db
 ENV WEBUI_HOST=0.0.0.0
 ENV API_PORT=8000
 
-# 暴露 API 端口
-EXPOSE 8000
+# 暴露 API 端口与 Web 管理台端口
+EXPOSE 8000 8787
 
 # 数据卷（持久化数据）
 VOLUME ["/app/data", "/app/logs", "/app/reports"]

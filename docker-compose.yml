@@ -10,11 +10,10 @@ x-common: &common
   environment:
     - TZ=Asia/Shanghai
   volumes:
-    - /home/slyfy27/docker/stock/.env:/config/.env:ro
     - ../data:/app/data
     - ../logs:/app/logs
     - ../reports:/app/reports
-    - /home/slyfy27/docker/stock/.env:/app/.env  # 如果需要将NAS上的.env挂载到容器内，也可相应调整
+    - ../.env.example:/app/.env  # 如果需要将NAS上的.env挂载到容器内，也可相应调整
   network_mode: host  # 添加host网络模式（注意：host模式下，端口暴露可能无效，因为容器直接使用宿主机网络）
 
 services:
@@ -29,3 +28,13 @@ services:
     container_name: stock-server
     command: ["python", "main.py", "--serve-only", "--host", "0.0.0.0", "--port", "22222"]
     # 注意：在host模式下，无需暴露端口，因为容器使用宿主机网络，但命令中的--host和--port仍有效
+
+  # Web 管理台（PR #20：配置与报告管理，独立于主 Web UI）
+  web-admin:
+    <<: *common
+    container_name: stock-web-admin
+    command: ["python", "web_admin/server.py"]
+    environment:
+      - TZ=Asia/Shanghai
+      - WEB_ADMIN_PORT=22223
+    # 端口 22223（原默认 8787）；host 模式下访问 http://<主机>:22223
