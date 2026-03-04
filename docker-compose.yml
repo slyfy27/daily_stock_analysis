@@ -1,0 +1,30 @@
+version: '3.8'
+
+x-common: &common
+  build:
+    context: ..
+    dockerfile: docker/Dockerfile
+  restart: unless-stopped
+  env_file:
+    - /home/slyfy27/docker/stock/.env  # 修改为您的NAS上的.env文件路径，例如 /mnt/nas/.env 或其他实际目录
+  environment:
+    - TZ=Asia/Shanghai
+  volumes:
+    - ../data:/app/data
+    - ../logs:/app/logs
+    - ../reports:/app/reports
+    - /home/slyfy27/docker/stock/.env:/app/.env  # 如果需要将NAS上的.env挂载到容器内，也可相应调整
+  network_mode: host  # 添加host网络模式（注意：host模式下，端口暴露可能无效，因为容器直接使用宿主机网络）
+
+services:
+  # 定时任务模式
+  analyzer:
+    <<: *common
+    container_name: stock-analyzer
+
+  # FastAPI 模式
+  server:
+    <<: *common
+    container_name: stock-server
+    command: ["python", "main.py", "--serve-only", "--host", "0.0.0.0", "--port", "22222"]
+    # 注意：在host模式下，无需暴露端口，因为容器使用宿主机网络，但命令中的--host和--port仍有效
