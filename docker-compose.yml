@@ -6,7 +6,7 @@ x-common: &common
     dockerfile: docker/Dockerfile
   restart: unless-stopped
   env_file:
-    - /config/.env  # 修改为您的NAS上的.env文件路径，例如 /mnt/nas/.env 或其他实际目录
+    - ../.env.example  # 修改为您的NAS上的.env文件路径，例如 /mnt/nas/.env 或其他实际目录
   environment:
     - TZ=Asia/Shanghai
   volumes:
